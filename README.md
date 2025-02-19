@@ -1,15 +1,31 @@
-Apache License 2.0
+# Rosen - A React Charting Library
 
-Copyright (c) 2025 Filipe Sommer
+A lightweight and easy-to-use charting library built with D3.js and Tailwind. Just copy-paste the code and install the required dependencies to get started!
 
-Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at:
+## Installation
 
-http://www.apache.org/licenses/LICENSE-2.0
+First, install D3.js by running:
 
-Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+```sh
+npm install d3
+```
 
-Attribution Requirement:
-This software is provided under the Apache License 2.0. While you are free to use, modify, distribute, and even use it commercially, you must attribute the original author in any derivative works or distributions.
+If you're using TypeScript, install the D3 types as well:
 
-Paid License Exception:
-Users who obtain a lifetime access license are exempt from the attribution requirement and may use, modify, and distribute the software without attribution.
+```sh
+npm install --save-dev @types/d3
+```
+
+## Usage
+
+Simply copy and paste the provided charting code into your project and ensure that D3.js is installed.
+
+## Features
+
+- Simple copy-paste integration
+- Uses D3.js for powerful and flexible charting
+- Works with JavaScript and TypeScript
+
+## License
+
+MIT
