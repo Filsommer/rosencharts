@@ -16,7 +16,7 @@ const TooltipContext = React.createContext<TooltipContextValue | undefined>(unde
 function useTooltipContext(componentName: string): TooltipContextValue {
   const context = React.useContext(TooltipContext);
   if (!context) {
-    throw new Error("Tooltip must be used within a Tooltip Context");
+    throw new Error("Please wrap your TooltipContent and TooltipTrigger in a ClientTooltip");
   }
   return context;
 }
@@ -106,55 +106,57 @@ TooltipTrigger.displayName = TRIGGER_NAME;
 
 const CONTENT_NAME = "TooltipContent";
 
-const TooltipContent = React.forwardRef<HTMLDivElement, { children: React.ReactNode }>((props) => {
-  const { children } = props;
-  const context = useTooltipContext(CONTENT_NAME);
-  const runningOnClient = typeof document !== "undefined";
-  const tooltipRef = React.useRef<HTMLDivElement>(null);
+const TooltipContent = React.forwardRef<HTMLDivElement, { children: React.ReactNode }>(
+  (props, _) => {
+    const { children } = props;
+    const context = useTooltipContext(CONTENT_NAME);
+    const runningOnClient = typeof document !== "undefined";
+    const tooltipRef = React.useRef<HTMLDivElement>(null);
 
-  // Calculate position based on viewport
-  const getTooltipPosition = () => {
-    if (!tooltipRef.current || !context.tooltip) return {};
+    // Calculate position based on viewport
+    const getTooltipPosition = () => {
+      if (!tooltipRef.current || !context.tooltip) return {};
 
-    const tooltipWidth = tooltipRef.current.offsetWidth;
-    const viewportWidth = window.innerWidth;
-    const willOverflowRight = context.tooltip.x + tooltipWidth + 10 > viewportWidth;
+      const tooltipWidth = tooltipRef.current.offsetWidth;
+      const viewportWidth = window.innerWidth;
+      const willOverflowRight = context.tooltip.x + tooltipWidth + 10 > viewportWidth;
 
-    return {
-      top: context.tooltip.y - 20,
-      left: willOverflowRight ? context.tooltip.x - tooltipWidth - 10 : context.tooltip.x + 10,
+      return {
+        top: context.tooltip.y - 20,
+        left: willOverflowRight ? context.tooltip.x - tooltipWidth - 10 : context.tooltip.x + 10,
+      };
     };
-  };
 
-  if (!context.tooltip || !runningOnClient) {
-    return null;
+    if (!context.tooltip || !runningOnClient) {
+      return null;
+    }
+
+    const isMobile = window.innerWidth < 768;
+
+    return createPortal(
+      isMobile ? (
+        <div
+          className="fixed h-fit z-[60] w-fit rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3"
+          style={{
+            top: context.tooltip.y,
+            left: context.tooltip.x + 20,
+          }}
+        >
+          {children}
+        </div>
+      ) : (
+        <div
+          ref={tooltipRef}
+          className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3.5 py-2 rounded fixed z-50"
+          style={getTooltipPosition()}
+        >
+          {children}
+        </div>
+      ),
+      document.body
+    );
   }
-
-  const isMobile = window.innerWidth < 768;
-
-  return createPortal(
-    isMobile ? (
-      <div
-        className="fixed h-fit z-[60] w-fit rounded-lg bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-3"
-        style={{
-          top: context.tooltip.y,
-          left: context.tooltip.x + 20,
-        }}
-      >
-        {children}
-      </div>
-    ) : (
-      <div
-        ref={tooltipRef}
-        className="bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 px-3.5 py-2 rounded fixed z-50"
-        style={getTooltipPosition()}
-      >
-        {children}
-      </div>
-    ),
-    document.body
-  );
-});
+);
 
 TooltipContent.displayName = CONTENT_NAME;
 
